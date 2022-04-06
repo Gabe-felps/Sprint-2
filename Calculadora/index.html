@@ -20,60 +20,65 @@
     <p>Considerando esses dois pontos e buscando facilitar a visualização dos mesmos, nós disponibilizamos um simulador que mostra o desperdício atual da colheita <br>
     e o quanto este desperdício pode ser reduzido com o uso de nossos sensores de monitoramento e um sistema de controle de temperatura e umidade integrado a eles. </p>
 
-    <p>
-        Informe a unidade de medida utilizada:
-        <select id="sel_medida" onclick="escolheMedida()">
-            <option value="1">Quilogramas (1kg)</option>
-            <option value="15">Arrobas (15kg)</option>
-            <option value="60">Sacas (60kg)</option>
-            <option value="1000">Toneladas (1000kg)</option>
-        </select>
-    </p>
-
-    <p>
-        Informe a quantidade média produzida por mês (considerando também o que é descartado): <br>
-        <input placeholder="Quilogramas produzidos" id="in_producao">
-    </p>
-
-    <p>
-        Informe o valor médio por mês que é obtido pela empresa, em reais: <br>
-        <input placeholder="Venda" id="in_venda">
-    </p>
-
-    <p>
-        Informe a quantidade perdida durante o plantio (em %): <br>
-        <input placeholder="Desperdício" id="in_desperdicio">
-    </p>
-
-    <button onclick="resultado()">Ver resultado</button>
-
-    <div id="div_desperdicio" style="display: none;">
-        
-        <p>Seu desperdício médio mensal é de <b id="b_desperdicio_venda"></b> e, com isso, sua empresa <br>
-        acaba perdendo cerca de <b id="b_desperdicio_dinheiro"></b> dos <b id="b_total_dinheiro"></b> que poderia lucrar.</p>
-        
-        <p style="font-weight: bold;">Agora calcule como seria com um monitoramento em sua plantação:</p>
+    <div class="card">
 
         <p>
-            Informe o tamanho da área de plantio, em m²: <br>
-            <input placeholder="Área" id="in_area">
+            Informe a unidade de medida utilizada:
+            <select id="sel_medida" onchange="escolheMedida()">
+                <option value="1">Quilogramas (1kg)</option>
+                <option value="15">Arrobas (15kg)</option>
+                <option value="60">Sacas (60kg)</option>
+                <option value="1000">Toneladas (1000kg)</option>
+            </select>
         </p>
 
-        <button onclick="calculo()">Calcular</button>
+        <p>
+            Informe a quantidade média produzida por mês (considerando também o que é descartado): <br>
+            <input placeholder="Quilogramas produzidos" id="in_producao">
+        </p>
+
+        <p>
+            Informe o valor médio por mês que é obtido pela empresa, em reais: <br>
+            <input placeholder="Venda" id="in_venda">
+        </p>
+
+        <p>
+            Informe a quantidade perdida durante o plantio (em %): <br>
+            <input placeholder="Desperdício" id="in_desperdicio">
+        </p>
+
+        <button onclick="resultado()">Ver resultado</button>
+
+        <div id="div_desperdicio" style="display: none;">
+            
+            <p>Seu desperdício médio mensal é de <b id="b_desperdicio_venda"></b> e, com isso, sua empresa <br>
+            acaba perdendo cerca de <b id="b_desperdicio_dinheiro"></b> dos <b id="b_total_dinheiro"></b> que poderia lucrar.</p>
+            
+            <p style="font-weight: bold;">Agora calcule como seria com um monitoramento em sua plantação:</p>
+
+            <p>
+                Informe o tamanho da área de plantio, em m²: <br>
+                <input placeholder="Área" id="in_area">
+            </p>
+
+            <button onclick="calculo()">Calcular</button>
+
+        </div>
+        <div id="div_calculo" style="display: none;">
+
+            <p>
+                Ao aderir à um sistema de monitoramento adequado, haveria um diminuição de cerca de <b id="b_taxa_economia"></b> na taxa de alimentos desperdiçados, <br>
+                gerando <b id="b_lucro_total"></b>, um aumento de <b id="b_lucro_parcial"></b> quando comparado ao valor atual das vendas
+            </p>
+            <p>
+                Tudo isso sendo necessária apenas a instalação de <b id="b_sensores"></b> sensores, trazendo um custo de apenas <b id="b_sensores_custo"></b> de equipamentos para o monitoramento <br>
+                da temperatura e umidade.
+            </p>
+
+        </div>
 
     </div>
-    <div id="div_calculo" style="display: none;">
-
-        <p>
-            Ao aderir à um sistema de monitoramento adequado, haveria um diminuição de cerca de <b id="b_taxa_economia"></b> na taxa de alimentos desperdiçados, <br>
-            gerando <b id="b_lucro_total"></b>, um aumento de <b id="b_lucro_parcial"></b> quando comparado ao valor atual das vendas
-        </p>
-        <p>
-            Tudo isso sendo necessária apenas a instalação de <b id="b_sensores"></b> sensores, trazendo um custo de apenas <b id="b_sensores_custo"></b> de equipamentos para o monitoramento <br>
-            da temperatura e umidade.
-        </p>
-
-    </div>
+    
 </body>
 </html>
 
@@ -111,11 +116,11 @@
     function resultado() {
 
         
-        if (Number(in_desperdicio.value) <= 100 && Number(in_desperdicio.value) >= 0 && Number(in_producao.value) > 0 && Number(in_venda.value) > 0) {
+        if (Number(in_desperdicio.value) < 100 && Number(in_desperdicio.value) >= 0 && Number(in_producao.value) > 0 && Number(in_venda.value) > 0) {
             
             desperdicio = Number(in_desperdicio.value) / 100
             producao = Number(in_producao.value)
-            venda = Number(in_venda.value)
+            venda = Math.round(Number(in_venda.value))
             venda_total = venda / (1 - desperdicio)
             venda_desperdicio = venda_total * desperdicio
 
@@ -136,14 +141,14 @@
         if (in_area.value > 0) {
 
             var economia = 0.3
-            var venda_aumento = venda_desperdicio * economia
+            var venda_aumento = Math.round(venda_desperdicio * economia)
 
             var area = Number(in_area.value)
             var sensores = Math.ceil(area / 100)
 
             b_taxa_economia.innerHTML = economia * 100 + "%"
-            b_lucro_total.innerHTML = "R$" + (Math.round(venda + venda_aumento)).toFixed(2)
-            b_lucro_parcial.innerHTML = "R$" + (Math.round(venda_aumento)).toFixed(2)
+            b_lucro_total.innerHTML = "R$" + (venda + venda_aumento).toFixed(2)
+            b_lucro_parcial.innerHTML = "R$" + (venda_aumento).toFixed(2)
 
             b_sensores.innerHTML = sensores
             b_sensores_custo.innerHTML = "R$" + (sensores * 120).toFixed(2)
